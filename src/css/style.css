@@ -55,4 +55,50 @@ body {
 
 .title {
 	font-family: var(--font__small-caps);
+	text-align: center;
+	font-size: 60px;
+
+	margin-bottom: 20px;
+}
+
+.claim {
+	display: block;
+	text-align: center;
+	font-size: 25px;
+
+	margin-bottom: 40px;
+}
+
+.puzzle-container {
+	display: flex;
+	justify-content: center;
+	gap: 40px;
+}
+
+.puzzle-pieces {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+
+	/* background-color: var(--primary); */
+	border: 5px dotted var(--primary);
+	border-radius: 10px;
+	padding: 20px;
+
+	width: 400px;
+	height: 750px;
+}
+
+.puzzle-base {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	/* background-color: var(--secondary); */
+	border: 5px dotted var(--primary);
+	border-radius: 10px;
+	padding: 20px;
+
+	width: 750px;
+	height: 750px;
 }
