@@ -12,6 +12,8 @@
 	--accent: #14e630;
 
 	/* position */
+	--random-order: 1;
+	--random-rotation: 0deg;
 	--top-pos: 0px;
 	--left-pos: 0px;
 	--top-correction: 0px;
@@ -88,7 +90,8 @@ body {
 	align-items: center;
 	justify-content: center;
 
-	/* background-color: var(--primary); */
+	gap: 15px;
+
 	border: 5px dotted var(--primary);
 	border-radius: 10px;
 	padding: 20px;
@@ -100,6 +103,8 @@ body {
 .piece {
 	cursor: move;
 	cursor: grab;
+	order: var(--random-order);
+	/* transform: rotate(var(--random-rotation)); */
 }
 
 .piece:active {
@@ -107,6 +112,8 @@ body {
 }
 
 .puzzle-base {
+	user-select: none;
+
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -119,10 +126,16 @@ body {
 	position: relative;
 }
 
+.dragged-piece {
+	position: absolute;
+	left: -500px;
+}
+
 .dropped-piece {
 	position: absolute;
 	top: var(--top-pos);
 	left: var(--left-pos);
 	z-index: var(--z-index);
-	transform: translate(var(--left-correction), var(--top-correction));
+	transform: translate(var(--left-correction), var(--top-correction))
+		/* rotate(var(--random-rotation)) */;
 }

@@ -109,26 +109,18 @@ const CHARACTER_PIECES = CHARACTERS_INFO.find(item => {
 const setPuzzlePieces = () => {
 	const fragment = document.createDocumentFragment();
 	CHARACTER_PIECES.forEach(piece => {
-		const randomOrder = Math.round(Math.random() * 11);
-		// si no consigo la rotación esta línea no me vale 🙃
-		// const randomRotation = Math.round(Math.random() * 37) * 10;
-
-		const puzzleDiv = document.createElement('div');
-		puzzleDiv.id = piece.id;
-		puzzleDiv.classList.add('piece');
-		puzzleDiv.style.setProperty('--random-order', randomOrder);
-
-		// si no consigo la rotación esta línea no me vale 🙃
-		// está comentada también en el css
-		// puzzleDiv.style.setProperty('--random-rotation', `${randomRotation}deg`);
-		// puzzleDiv.dataset.rotation = randomRotation;
-
 		const puzzlePiece = document.createElement('img');
-		puzzlePiece.src = `${BASE_SRC}/${CHARACTER.toUpperCase()}/${piece.src}`;
+		const randomOrder = Math.round(Math.random() * 11);
+		const randomRotation = Math.round(Math.random() * 37) * 10;
 
-		puzzleDiv.addEventListener('dragstart', dragStart);
-		puzzleDiv.append(puzzlePiece);
-		fragment.append(puzzleDiv);
+		puzzlePiece.src = `${BASE_SRC}/${CHARACTER.toUpperCase()}/${piece.src}`;
+		puzzlePiece.id = piece.id;
+		puzzlePiece.classList.add('piece');
+		puzzlePiece.style.setProperty('--random-order', randomOrder);
+		puzzlePiece.style.setProperty('--random-rotation', `${randomRotation}deg`);
+
+		puzzlePiece.addEventListener('dragstart', dragStart);
+		fragment.append(puzzlePiece);
 	});
 	puzzlePiecesElement.textContent = '';
 	puzzlePiecesElement.append(fragment);
@@ -240,18 +232,10 @@ const checkResult = () => {
 
 // ------------------------------------------------------
 
-/*
-// ⚠️ esta parte da problemas
-// rotación
-const rotatePiece = (event, piece) => {
+const rotatePiece = event => {
 	if (!isDragging) return;
 	console.log(event);
-	console.log(piece.dataset.rotation);
-	console.log(event.deltaY);
-
-	let rotation = piece.dataset.rotation;
 };
-*/
 
 // ------------------------------------------------------
 
@@ -273,16 +257,19 @@ const correctDragPieceCoords = (event, draggedPiece) => {
 	// resto 4px de más en cada sentido
 	// porque en el drop por defecto parece que la pieza "cae" y se desvía un poco
 	// quiero que el jugador sepa donde va a estar la pieza exactamente
-	draggedPiece.style.setProperty('--top-correction', `-${dragCoords[1]}px`);
-	draggedPiece.style.setProperty('--left-correction', `-${dragCoords[0]}px`);
+	draggedPiece.style.setProperty('--top-correction', `-${dragCoords[1] + 4}px`);
+	draggedPiece.style.setProperty(
+		'--left-correction',
+		`-${dragCoords[0] + 4}px`
+	);
 	draggedPiece.classList.add('dragged-piece');
 
-	// asegurarme de que la imagen del drag es igual que la original
+	// asegurarme de que la imagen del drag es del mismo tamaño que la original
 	event.dataTransfer.setDragImage(draggedPiece, dragCoords[0], dragCoords[1]);
 };
 
 const dragEnd = event => {
-	const draggedPiece = event.target.parentElement;
+	const draggedPiece = document.getElementById(event.target.id);
 	draggedPiece.classList.remove('dragged-piece');
 	isDragging = false;
 };
@@ -290,20 +277,14 @@ const dragEnd = event => {
 const dragStart = event => {
 	isDragging = true;
 
-	const draggedPiece = event.target.parentElement;
+	const draggedPiece = document.getElementById(event.target.id);
 	correctDragPieceCoords(event, draggedPiece);
+	event.dataTransfer.setData('text/plain', event.target.id);
+	console.log(event);
 
-	event.dataTransfer.setData('text/plain', draggedPiece.id);
-
-	/*
-	// ⚠️ esta parte da problemas
 	// rotacion
-	document.addEventListener('wheel', () => {
-		rotatePiece(draggedPiece);
-	});
-	*/
+	document.addEventListener('wheel', rotatePiece);
 
-	// si sueltas la pieza fuera del puzzle, vuelve a donde estaba
 	draggedPiece.addEventListener('dragend', dragEnd);
 };
 
@@ -313,18 +294,9 @@ const correctDroppedPieceCoords = (event, droppedPiece) => {
 	const dropCoords = getMousePositionWithinElement(event, puzzleBaseElement);
 	droppedPiece.style.setProperty('--top-pos', `${dropCoords[1]}px`);
 	droppedPiece.style.setProperty('--left-pos', `${dropCoords[0]}px`);
-
-	console.log('DROP COORDS');
-	console.log(dropCoords);
 };
 
 const styleDroppedPiece = droppedPiece => {
-	// mantener la rotación de la pieza
-	droppedPiece.style.setProperty(
-		'--random-rotation',
-		`${droppedPiece.dataset.rotation}deg`
-	);
-
 	// las piezas tienen un Z index dependiendo de cuál sean
 	CHARACTER_PIECES.forEach(piece => {
 		if (piece.id !== droppedPiece.id) return;
@@ -335,7 +307,6 @@ const styleDroppedPiece = droppedPiece => {
 	droppedPiece.classList.add('dropped-piece');
 	droppedPiece.classList.remove('piece');
 	droppedPiece.draggable = false;
-	droppedPiece.children[0].draggable = false;
 };
 
 const drop = event => {
