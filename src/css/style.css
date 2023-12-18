@@ -104,7 +104,12 @@ body {
 	cursor: move;
 	cursor: grab;
 	order: var(--random-order);
-	/* transform: rotate(var(--random-rotation)); */
+	position: relative;
+	z-index: 0;
+}
+
+.piece-img {
+	transform: rotate(var(--random-rotation));
 }
 
 .piece:active {
@@ -126,6 +131,44 @@ body {
 	position: relative;
 }
 
+.rotate-piece {
+	filter: drop-shadow(0 0 10px var(--accent));
+}
+
+.rotate-piece__disabled {
+	cursor: not-allowed;
+	opacity: 0.4;
+	z-index: -1;
+}
+
+.rotate-piece__btn {
+	color: var(--primary);
+	font-size: 32px;
+	line-height: 23px;
+
+	display: inline-block;
+	background-color: var(--accent);
+
+	position: absolute;
+	transform: translateY(-50%);
+}
+
+.rotate-piece__btn--left {
+	left: -80px;
+	top: 50%;
+}
+
+.rotate-piece__btn--right {
+	right: -80px;
+	top: 50%;
+}
+
+.rotate-piece__btn--finish {
+	right: 50%;
+	transform: translateX(50%);
+	bottom: -80px;
+}
+
 .dragged-piece {
 	position: absolute;
 	left: -500px;
@@ -137,5 +180,5 @@ body {
 	left: var(--left-pos);
 	z-index: var(--z-index);
 	transform: translate(var(--left-correction), var(--top-correction))
-		/* rotate(var(--random-rotation)) */;
+		rotate(var(--random-rotation));
 }

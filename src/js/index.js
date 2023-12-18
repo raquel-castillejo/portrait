@@ -13,7 +13,7 @@ const puzzlePiecesElement = document.getElementById('puzzle-pieces');
 
 // VARIABLES
 // =========
-let isDragging = false;
+// let isDragging = false;
 const BASE_SRC = './assets/images/characters';
 const CHARACTER = JSON.parse(LS.getItem('character'));
 // probar con luigi (porque es el que tengo hecho)
@@ -111,7 +111,7 @@ const setPuzzlePieces = () => {
 	CHARACTER_PIECES.forEach(piece => {
 		const randomOrder = Math.round(Math.random() * 11);
 		// si no consigo la rotación esta línea no me vale 🙃
-		// const randomRotation = Math.round(Math.random() * 37) * 10;
+		const randomRotation = Math.round(Math.random() * 37) * 10;
 
 		const puzzleDiv = document.createElement('div');
 		puzzleDiv.id = piece.id;
@@ -124,9 +124,16 @@ const setPuzzlePieces = () => {
 		// puzzleDiv.dataset.rotation = randomRotation;
 
 		const puzzlePiece = document.createElement('img');
-		puzzlePiece.src = `${BASE_SRC}/${CHARACTER.toUpperCase()}/${piece.src}`;
 
-		puzzleDiv.addEventListener('dragstart', dragStart);
+		puzzlePiece.src = `${BASE_SRC}/${CHARACTER.toUpperCase()}/${piece.src}`;
+		puzzlePiece.draggable = false;
+		puzzlePiece.style.setProperty('--random-rotation', `${randomRotation}deg`);
+		puzzlePiece.dataset.rotation = randomRotation;
+		puzzlePiece.classList.add('piece-img');
+
+		// puzzleDiv.addEventListener('dragstart', dragStart);
+		puzzleDiv.addEventListener('click', allowRotation);
+
 		puzzleDiv.append(puzzlePiece);
 		fragment.append(puzzleDiv);
 	});
@@ -147,7 +154,7 @@ const setPuzzleBase = imgSrc => {
 // cuenta atrás para empezar el puzzle
 const startPuzzleCountdown = () => {
 	const countdownTxt = '¡Mira atentamente la imagen!';
-	let countdownNumber = 6;
+	let countdownNumber = 3;
 	puzzlePiecesElement.textContent = countdownTxt + countdownNumber;
 
 	const countdown = setInterval(() => {
@@ -240,18 +247,93 @@ const checkResult = () => {
 
 // ------------------------------------------------------
 
-/*
-// ⚠️ esta parte da problemas
-// rotación
-const rotatePiece = (event, piece) => {
-	if (!isDragging) return;
+const finishRotation = event => {
 	console.log(event);
-	console.log(piece.dataset.rotation);
-	console.log(event.deltaY);
 
-	let rotation = piece.dataset.rotation;
+	const pieceDiv = event.target.parentElement;
+	const pieceDivChildren = [...pieceDiv.children];
+	pieceDivChildren.forEach(piece => {
+		if (piece.tagName !== 'BUTTON') {
+			piece.draggable = true;
+			piece.addEventListener('dragstart', dragStart);
+		} else {
+			piece.remove();
+		}
+	});
+
+	pieceDiv.classList.remove('rotate-piece');
+	const activePuzzlePieces = [...puzzlePiecesElement.children];
+	activePuzzlePieces.forEach(activePiece => {
+		activePiece.classList.remove('rotate-piece__disabled');
+	});
 };
-*/
+
+const rotatePiece = event => {
+	const pieceToRotate = event.target.parentElement.children[0];
+	const rotateDirection = event.target.dataset.rotate;
+	let pieceRotation = Number(pieceToRotate.dataset.rotation);
+
+	if (rotateDirection === 'right') {
+		pieceRotation < 360 ? (pieceRotation += 10) : (pieceRotation = 10);
+	} else if (rotateDirection === 'left') {
+		pieceRotation > 0 ? (pieceRotation -= 10) : (pieceRotation = 350);
+	}
+
+	pieceToRotate.dataset.rotation = pieceRotation;
+	pieceToRotate.style.setProperty('--random-rotation', `${pieceRotation}deg`);
+};
+
+// rotación
+const allowRotation = event => {
+	const pieceImg = event.target;
+	const pieceDiv = pieceImg.parentElement;
+
+	// me aseguro de que no había otra pieza activa
+	if (pieceDiv.classList.contains('rotate-piece__disabled')) return;
+	// me aseguro de que esta pieza no estaba activa desde antes
+	if (pieceDiv.classList.contains('rotate-piece')) return;
+
+	pieceDiv.classList.add('rotate-piece');
+
+	// desactivo el resto de piezas para que no se roten dos a la vez por error
+	const activePuzzlePieces = [...puzzlePiecesElement.children];
+	activePuzzlePieces.forEach(activePiece => {
+		if (activePiece === pieceDiv) return;
+		activePiece.classList.add('rotate-piece__disabled');
+	});
+
+	const fragment = document.createDocumentFragment();
+
+	const rotateLeftElement = document.createElement('button');
+	rotateLeftElement.textContent = '←';
+	rotateLeftElement.dataset.rotate = 'left';
+	rotateLeftElement.classList.add(
+		'rotate-piece__btn',
+		'rotate-piece__btn--left'
+	);
+
+	const rotateRightElement = document.createElement('button');
+	rotateRightElement.textContent = '→';
+	rotateRightElement.dataset.rotate = 'right';
+	rotateRightElement.classList.add(
+		'rotate-piece__btn',
+		'rotate-piece__btn--right'
+	);
+
+	const finishRotationElement = document.createElement('button');
+	finishRotationElement.textContent = 'finish';
+	finishRotationElement.classList.add(
+		'rotate-piece__btn',
+		'rotate-piece__btn--finish'
+	);
+
+	fragment.append(rotateLeftElement, rotateRightElement, finishRotationElement);
+	pieceDiv.append(fragment);
+
+	rotateRightElement.addEventListener('click', rotatePiece);
+	rotateLeftElement.addEventListener('click', rotatePiece);
+	finishRotationElement.addEventListener('click', finishRotation);
+};
 
 // ------------------------------------------------------
 
@@ -284,24 +366,19 @@ const correctDragPieceCoords = (event, draggedPiece) => {
 const dragEnd = event => {
 	const draggedPiece = event.target.parentElement;
 	draggedPiece.classList.remove('dragged-piece');
-	isDragging = false;
 };
 
 const dragStart = event => {
-	isDragging = true;
-
 	const draggedPiece = event.target.parentElement;
 	correctDragPieceCoords(event, draggedPiece);
 
 	event.dataTransfer.setData('text/plain', draggedPiece.id);
 
-	/*
-	// ⚠️ esta parte da problemas
-	// rotacion
-	document.addEventListener('wheel', () => {
-		rotatePiece(draggedPiece);
-	});
-	*/
+	// // ⚠️ esta parte da problemas
+	// // rotacion
+	// document.addEventListener('wheel', () => {
+	// 	rotatePiece(draggedPiece);
+	// });
 
 	// si sueltas la pieza fuera del puzzle, vuelve a donde estaba
 	draggedPiece.addEventListener('dragend', dragEnd);
