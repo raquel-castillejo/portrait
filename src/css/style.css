@@ -106,14 +106,16 @@ body {
 	order: var(--random-order);
 	position: relative;
 	z-index: 0;
-}
 
-.piece-img {
-	transform: rotate(var(--random-rotation));
+	border: 2px solid red;
 }
 
 .piece:active {
 	cursor: grabbing;
+}
+
+.piece-img {
+	transform: rotate(var(--random-rotation));
 }
 
 .puzzle-base {
@@ -148,7 +150,6 @@ body {
 
 	display: inline-block;
 	background-color: var(--accent);
-
 	position: absolute;
 	transform: translateY(-50%);
 }
@@ -169,16 +170,10 @@ body {
 	bottom: -80px;
 }
 
-.dragged-piece {
-	position: absolute;
-	left: -500px;
-}
-
 .dropped-piece {
 	position: absolute;
 	top: var(--top-pos);
 	left: var(--left-pos);
 	z-index: var(--z-index);
-	transform: translate(var(--left-correction), var(--top-correction))
-		rotate(var(--random-rotation));
+	transform: translate(var(--left-correction), var(--top-correction));
 }
