@@ -78,6 +78,37 @@ body {
 	margin-bottom: 40px;
 }
 
+.btn {
+	display: inline-block;
+	padding: 10px;
+	border-radius: 5px;
+
+	background-color: var(--secondary);
+	font-size: 20px;
+	text-align: center;
+	color: var(--text);
+
+	margin-left: 50%;
+	margin-right: auto;
+	transform: translateX(-50%);
+}
+
+.btn:hover {
+	background-color: var(--primary);
+	color: var(--secondary);
+}
+
+.characters-list {
+	display: flex;
+	gap: 20px;
+}
+
+.characters-list__img {
+	width: 200px;
+	height: 200px;
+	background-color: #000;
+}
+
 .puzzle-container {
 	display: flex;
 	justify-content: center;
