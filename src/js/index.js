@@ -11,6 +11,8 @@ const LS = window.localStorage;
 const puzzleBaseElement = document.getElementById('puzzle-base');
 const puzzlePiecesElement = document.getElementById('puzzle-pieces');
 
+const rulesBtnElement = document.getElementById('rules-btn');
+
 // VARIABLES
 // =========
 const BASE_SRC = './assets/images/characters';
@@ -103,6 +105,20 @@ const CHARACTER_PIECES = CHARACTERS_INFO.find(item => {
 // FUNCTIONS
 // =========
 
+// rules
+
+const closeRules = () => {
+	const rulesElement = document.getElementById('rules');
+	rulesElement.classList.add('hidden');
+};
+
+const showRules = () => {
+	const rulesElement = document.getElementById('rules');
+	const closeRulesElement = document.getElementById('close-rules');
+	rulesElement.classList.remove('hidden');
+	closeRulesElement.addEventListener('click', closeRules);
+};
+
 // PINTAR EL PUZZLE
 // pintar las piezas del puzzle
 const setPuzzlePieces = () => {
@@ -145,19 +161,44 @@ const setPuzzleBase = imgSrc => {
 
 // cuenta atrás para empezar el puzzle
 const startPuzzleCountdown = () => {
-	const countdownTxt = '¡Mira atentamente la imagen!';
-	let countdownNumber = 3;
-	puzzlePiecesElement.textContent = countdownTxt + countdownNumber;
+	const countdownContainerElement = document.createElement('div');
+	countdownContainerElement.classList.add('puzzle-info__container');
+
+	const countdownTxtElement = document.createElement('span');
+	countdownTxtElement.classList.add('puzzle-info__txt');
+	countdownTxtElement.textContent = '¡Mira atentamente la imagen!';
+
+	const countdownNumberElement = document.createElement('span');
+	let countdownNumber = 5;
+	countdownNumberElement.classList.add('puzzle-info__number');
+	countdownNumberElement.textContent = countdownNumber;
+
+	countdownContainerElement.append(countdownTxtElement);
+	countdownContainerElement.append(countdownNumberElement);
+	puzzlePiecesElement.append(countdownContainerElement);
 
 	const countdown = setInterval(() => {
 		countdownNumber--;
-		puzzlePiecesElement.textContent = countdownTxt + countdownNumber;
+		countdownNumberElement.textContent = countdownNumber;
+
+		countdownContainerElement.textContent = '';
+		countdownContainerElement.append(countdownTxtElement);
+		countdownContainerElement.append(countdownNumberElement);
+		puzzlePiecesElement.append(countdownContainerElement);
+
 		if (countdownNumber === 0) {
 			clearInterval(countdown);
 			setPuzzlePieces();
 			setPuzzleBase(`${BASE_SRC}/${CHARACTER}/CLEAN.png`);
 		}
 	}, 1000);
+};
+
+// ------------------------------------------------------
+
+const changeAccentColor = () => {
+	const bodyElement = document.getElementById('body');
+	bodyElement.classList.add(`accent--${CHARACTER.toLowerCase()}`);
 };
 
 // pintar el personaje para que el jugador lo vea por primera vez
@@ -170,6 +211,7 @@ const setPuzzle = () => {
 
 	setPuzzleBase(`${BASE_SRC}/${CHARACTER.toUpperCase()}/ORIGINAL.png`);
 	startPuzzleCountdown();
+	changeAccentColor();
 };
 setPuzzle(CHARACTER);
 
@@ -189,14 +231,25 @@ const evaluatePuzzleSolution = (pixelsFailed, numberOfPieces) => {
 		pixelsGrades.push(lastGrade - gradeDifference);
 	}
 
-	console.log(pixelsGrades);
-
 	const result =
 		pixelsGrades.findIndex(grades => {
 			return pixelsFailed > grades;
 		}) + 1;
 
-	puzzlePiecesElement.textContent = 'TU NOTA ES... ' + result;
+	const resultContainerElement = document.createElement('div');
+	resultContainerElement.classList.add('puzzle-info__container');
+
+	const resultTxtElement = document.createElement('span');
+	resultTxtElement.classList.add('puzzle-info__txt');
+	resultTxtElement.textContent = 'TU NOTA ES...';
+
+	const resultNumberElement = document.createElement('span');
+	resultNumberElement.classList.add('puzzle-info__number');
+	resultNumberElement.textContent = result;
+
+	resultContainerElement.append(resultTxtElement);
+	resultContainerElement.append(resultNumberElement);
+	puzzlePiecesElement.append(resultContainerElement);
 };
 
 const checkResult = () => {
@@ -279,6 +332,8 @@ const allowRotation = event => {
 	const pieceImg = event.target;
 	const pieceDiv = pieceImg.parentElement;
 
+	// me aseguro de que es una pieza
+	if (!pieceDiv.classList.contains('piece')) return;
 	// me aseguro de que no había otra pieza activa
 	if (pieceDiv.classList.contains('rotate-piece__disabled')) return;
 	// me aseguro de que esta pieza no estaba activa desde antes
@@ -297,7 +352,7 @@ const allowRotation = event => {
 	const fragment = document.createDocumentFragment();
 
 	const rotateLeftElement = document.createElement('button');
-	rotateLeftElement.textContent = '←';
+	rotateLeftElement.textContent = '↶';
 	rotateLeftElement.dataset.rotate = 'left';
 	rotateLeftElement.classList.add(
 		'rotate-piece__btn',
@@ -305,7 +360,7 @@ const allowRotation = event => {
 	);
 
 	const rotateRightElement = document.createElement('button');
-	rotateRightElement.textContent = '→';
+	rotateRightElement.textContent = '↷';
 	rotateRightElement.dataset.rotate = 'right';
 	rotateRightElement.classList.add(
 		'rotate-piece__btn',
@@ -313,7 +368,7 @@ const allowRotation = event => {
 	);
 
 	const finishRotationElement = document.createElement('button');
-	finishRotationElement.textContent = 'finish';
+	finishRotationElement.textContent = 'done';
 	finishRotationElement.classList.add(
 		'rotate-piece__btn',
 		'rotate-piece__btn--finish'
@@ -407,3 +462,6 @@ const drop = event => {
 // drag and drop
 puzzleBaseElement.addEventListener('dragover', dragOver);
 puzzleBaseElement.addEventListener('drop', drop);
+
+// rules
+rulesBtnElement.addEventListener('click', showRules);

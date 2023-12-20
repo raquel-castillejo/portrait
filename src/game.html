@@ -18,19 +18,67 @@
 		<link rel="stylesheet" href="../css/style.css" />
 		<title>Portrait Game</title>
 	</head>
-	<body>
-		<h1 id="title" class="title">Luigi</h1>
-		<span id="claim" class="claim"
-			>Ordena las piezas correctamente para crear a Luigi.</span
-		>
+	<body id="body">
+		<header class="header">
+			<h1 id="title" class="title">Luigi</h1>
+			<span id="claim" class="claim"
+				>Ordena las piezas correctamente para crear a Luigi.</span
+			>
+			<button id="rules-btn" class="btn btn--puzzle">¿Cómo se juega?</button>
+		</header>
 
 		<div id="puzzle-container" class="puzzle-container">
 			<div id="puzzle-pieces" class="puzzle-pieces"></div>
-
 			<div id="puzzle-base" class="puzzle-base"></div>
 		</div>
 
-		<!-- <img src="./assets/images/cute-cat.webp" alt="" /> -->
+		<div id="rules" class="rules hidden">
+			<button id="close-rules" class="btn__close">x</button>
+			<h2>¿Cómo se juega?</h2>
+			<p>
+				El objetivo del juego es conseguir hacer el retrato de tu personaje lo
+				más parecido posible a su rostro real.
+			</p>
+
+			<p>
+				Cuando escojas un personaje tendrás 5 segundos para memorizar su rostro.
+				¡Luego desaparecerá! Las piezas del puzzle están desordenadas, así que
+				tienes que prestar mucha atención.
+			</p>
+
+			<img
+				class="rules__img"
+				src="../assets/images/rules/1_countdown.gif"
+				alt=""
+			/>
+
+			<p>
+				Haz click encima de una de las piezas para poder girarla hacia la
+				derecha o la izquierda. Haz click en el botón de terminado ("DONE")
+				cuando termines para salir del menú de giro.
+			</p>
+
+			<p>
+				Puedes girar las piezas en cualquier momento, siempre que no las hayas
+				colocado ya en la cara de tu personaje.
+			</p>
+
+			<img class="rules__img" src="../assets/images/rules/2_girar.gif" alt="" />
+
+			<p>
+				Para montar a tu personaje, escoge una pieza y arrástrala hasta la
+				posición que quieras sobre su rostro. ¡Ten cuidado! Una vez la sueltes,
+				no la podrás volver a mover, ni girar.
+			</p>
+
+			<img
+				class="rules__img"
+				src="../assets/images/rules/3_arrastrar.gif"
+				alt=""
+			/>
+
+			<p>¿Eres capaz de crear a tu personaje favorito de memoria?</p>
+		</div>
 		<script type="module" src="../js/index.js"></script>
 	</body>
 </html>

@@ -4,22 +4,35 @@ const LS = window.localStorage;
 const characterElements = [
 	...document.getElementsByClassName('characters-list__single')
 ];
+const rulesBtnElement = document.getElementById('rules-btn');
 
 // FUNCTIONS
 // =========
-
-// Se puede hacer en el enlace, supongo que esto es para poder compartirlo
-// ¿Cuál sería mejor en cada caso?
-// ¿Hay mejores formas de hacerlo para el juego?
-// https://medium.com/@cyberbotmachines/how-to-pass-value-from-one-html-page-to-another-using-javascript-3c9ab62df4d
 const updateLS = chosenCharacter => {
 	LS.setItem('character', JSON.stringify(chosenCharacter));
 };
 
 const chooseCharacter = event => {
-	console.log(event);
-	const clickedCharacter = event.target.dataset.character;
+	let clickedCharacter;
+
+	if (event.target.tagName !== 'A') {
+		clickedCharacter = event.target.parentElement.dataset.character;
+	} else {
+		clickedCharacter = event.target.dataset.character;
+	}
 	updateLS(clickedCharacter);
+};
+
+const closeRules = () => {
+	const rulesElement = document.getElementById('rules');
+	rulesElement.classList.add('hidden');
+};
+
+const showRules = () => {
+	const rulesElement = document.getElementById('rules');
+	const closeRulesElement = document.getElementById('close-rules');
+	rulesElement.classList.remove('hidden');
+	closeRulesElement.addEventListener('click', closeRules);
 };
 
 // EVENTS
@@ -27,3 +40,5 @@ const chooseCharacter = event => {
 characterElements.forEach(character => {
 	character.addEventListener('click', chooseCharacter);
 });
+
+rulesBtnElement.addEventListener('click', showRules);
