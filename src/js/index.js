@@ -68,33 +68,110 @@ const CHARACTERS_INFO = [
 			{
 				id: 'daisy-eyebrow-l',
 				src: `EYEBROW_LEFT.png`,
-				top: 0,
-				left: 0,
+				top: 329,
+				left: 327,
 				zPos: 2
 			},
 			{
 				id: 'daisy-eyebrow-r',
 				src: `EYEBROW_RIGHT.png`,
-				top: 0,
-				left: 0,
+				top: 345,
+				left: 401,
 				zPos: 2
 			},
 			{
 				id: 'daisy-eye-l',
 				src: `EYE_LEFT.png`,
-				top: 0,
-				left: 0,
+				top: 405,
+				left: 294,
 				zPos: 1
 			},
 			{
 				id: 'daisy-eye-r',
 				src: `EYE_RIGHT.png`,
-				top: 0,
-				left: 0,
+				top: 414,
+				left: 407,
 				zPos: 1
 			},
-			{ id: 'daisy-nose', src: `NOSE.png`, top: 0, left: 0, zPos: 3 },
-			{ id: 'daisy-mouth', src: `MOUTH.png`, top: 0, left: 0, zPos: 1 }
+			{ id: 'daisy-nose', src: `NOSE.png`, top: 461, left: 362, zPos: 3 },
+			{ id: 'daisy-mouth', src: `MOUTH.png`, top: 489, left: 372, zPos: 1 }
+		]
+	},
+	{
+		character: 'MARIO',
+		facePieces: [
+			{
+				id: 'mario-eyebrow-l',
+				src: `EYEBROW_LEFT.png`,
+				top: 228,
+				left: 375,
+				zPos: 2
+			},
+			{
+				id: 'mario-eyebrow-r',
+				src: `EYEBROW_RIGHT.png`,
+				top: 263,
+				left: 477,
+				zPos: 2
+			},
+			{
+				id: 'mario-eye-l',
+				src: `EYE_LEFT.png`,
+				top: 355,
+				left: 310,
+				zPos: 1
+			},
+			{
+				id: 'mario-eye-r',
+				src: `EYE_RIGHT.png`,
+				top: 337,
+				left: 450,
+				zPos: 1
+			},
+			{ id: 'mario-nose', src: `NOSE.png`, top: 394, left: 382, zPos: 3 },
+			{
+				id: 'mario-mustache',
+				src: `MUSTACHE.png`,
+				top: 425,
+				left: 353,
+				zPos: 2
+			},
+			{ id: 'mario-mouth', src: `MOUTH.png`, top: 480, left: 341, zPos: 1 }
+		]
+	},
+	{
+		character: 'PEACH',
+		facePieces: [
+			{
+				id: 'peach-eyebrow-l',
+				src: `EYEBROW_LEFT.png`,
+				top: 293,
+				left: 203,
+				zPos: 2
+			},
+			{
+				id: 'peach-eyebrow-r',
+				src: `EYEBROW_RIGHT.png`,
+				top: 269,
+				left: 334,
+				zPos: 2
+			},
+			{
+				id: 'peach-eye-l',
+				src: `EYE_LEFT.png`,
+				top: 380,
+				left: 236,
+				zPos: 1
+			},
+			{
+				id: 'peach-eye-r',
+				src: `EYE_RIGHT.png`,
+				top: 343,
+				left: 358,
+				zPos: 1
+			},
+			{ id: 'peach-nose', src: `NOSE.png`, top: 400, left: 265, zPos: 3 },
+			{ id: 'peach-mouth', src: `MOUTH.png`, top: 468, left: 301, zPos: 1 }
 		]
 	}
 ];
@@ -125,7 +202,7 @@ const setPuzzlePieces = () => {
 	const fragment = document.createDocumentFragment();
 	CHARACTER_PIECES.forEach(piece => {
 		const randomOrder = Math.round(Math.random() * 11);
-		const randomRotation = Math.round(Math.random() * 37) * 10;
+		// const randomRotation = Math.round(Math.random() * 37) * 10;
 
 		const puzzleDiv = document.createElement('div');
 		puzzleDiv.id = piece.id;
@@ -135,8 +212,8 @@ const setPuzzlePieces = () => {
 		const puzzlePiece = document.createElement('img');
 
 		puzzlePiece.src = `${BASE_SRC}/${CHARACTER.toUpperCase()}/${piece.src}`;
-		puzzlePiece.style.setProperty('--random-rotation', `${randomRotation}deg`);
-		puzzlePiece.dataset.rotation = randomRotation;
+		// puzzlePiece.style.setProperty('--random-rotation', `${randomRotation}deg`);
+		// puzzlePiece.dataset.rotation = randomRotation;
 		puzzlePiece.classList.add('piece-img');
 
 		puzzleDiv.addEventListener('dragstart', dragStart);
@@ -189,7 +266,7 @@ const startPuzzleCountdown = () => {
 		if (countdownNumber === 0) {
 			clearInterval(countdown);
 			setPuzzlePieces();
-			setPuzzleBase(`${BASE_SRC}/${CHARACTER}/CLEAN.png`);
+			// setPuzzleBase(`${BASE_SRC}/${CHARACTER}/CLEANED.png`);
 		}
 	}, 1000);
 };
@@ -221,8 +298,13 @@ setPuzzle(CHARACTER);
 const evaluatePuzzleSolution = (pixelsFailed, numberOfPieces) => {
 	// el fallo minimo y maximo estan calculados a ojo :/
 	const minFail = 50 * numberOfPieces; // nota: 10
-	const maxFail = 500 * numberOfPieces; // nota: 0
-	const gradeDifference = Math.round((maxFail - minFail) / 9);
+	const maxFail = 800 * numberOfPieces; // nota: 0
+	const gradeDifference = Math.round((maxFail - minFail) / numberOfPieces);
+
+	console.log('NOTAS');
+	console.log('nota de 10: ' + minFail);
+	console.log('nota de 0: ' + maxFail);
+	console.log('diferencia: ' + gradeDifference);
 
 	const pixelsGrades = [];
 	pixelsGrades.push(maxFail);
@@ -262,6 +344,8 @@ const checkResult = () => {
 	let totalFail = 0;
 
 	droppedPieces.forEach(droppedPiece => {
+		console.log('DROPPED PIECE');
+		console.log(droppedPiece);
 		const pieceBoundaries = droppedPiece.getBoundingClientRect();
 
 		// estas const son la posición de la pieza dentro del puzzle
@@ -285,6 +369,7 @@ const checkResult = () => {
 
 	console.log('TOTAL X FAIL: ' + totalXFail);
 	console.log('TOTAL Y FAIL: ' + totalYFail);
+	console.log(totalFail);
 	// fin del calculo de px de error totales
 
 	evaluatePuzzleSolution(totalFail, droppedPieces.length);
@@ -402,11 +487,8 @@ const correctDragPieceCoords = (event, draggedPiece) => {
 	// resto 4px de más en cada sentido
 	// porque en el drop por defecto parece que la pieza "cae" y se desvía un poco
 	// quiero que el jugador sepa donde va a estar la pieza exactamente
-	draggedPiece.style.setProperty(
-		'--left-correction',
-		`-${dragCoords[0] + 4}px`
-	);
-	draggedPiece.style.setProperty('--top-correction', `-${dragCoords[1] + 4}px`);
+	draggedPiece.style.setProperty('--left-correction', `-${dragCoords[0]}px`);
+	draggedPiece.style.setProperty('--top-correction', `-${dragCoords[1]}px`);
 
 	// asegurarme de que la imagen del drag es igual que la original
 	event.dataTransfer.setDragImage(draggedPiece, dragCoords[0], dragCoords[1]);
@@ -425,6 +507,10 @@ const correctDroppedPieceCoords = (event, droppedPiece) => {
 	const dropCoords = getMousePositionWithinElement(event, puzzleBaseElement);
 	droppedPiece.style.setProperty('--top-pos', `${dropCoords[1]}px`);
 	droppedPiece.style.setProperty('--left-pos', `${dropCoords[0]}px`);
+
+	console.log(droppedPiece);
+	console.log('POS X: ' + dropCoords[0]);
+	console.log('POS Y: ' + dropCoords[1]);
 };
 
 const styleDroppedPiece = droppedPiece => {
