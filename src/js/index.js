@@ -202,7 +202,7 @@ const setPuzzlePieces = () => {
 	const fragment = document.createDocumentFragment();
 	CHARACTER_PIECES.forEach(piece => {
 		const randomOrder = Math.round(Math.random() * 11);
-		// const randomRotation = Math.round(Math.random() * 37) * 10;
+		const randomRotation = Math.round(Math.random() * 37) * 10;
 
 		const puzzleDiv = document.createElement('div');
 		puzzleDiv.id = piece.id;
@@ -212,8 +212,8 @@ const setPuzzlePieces = () => {
 		const puzzlePiece = document.createElement('img');
 
 		puzzlePiece.src = `${BASE_SRC}/${CHARACTER.toUpperCase()}/${piece.src}`;
-		// puzzlePiece.style.setProperty('--random-rotation', `${randomRotation}deg`);
-		// puzzlePiece.dataset.rotation = randomRotation;
+		puzzlePiece.style.setProperty('--random-rotation', `${randomRotation}deg`);
+		puzzlePiece.dataset.rotation = randomRotation;
 		puzzlePiece.classList.add('piece-img');
 
 		puzzleDiv.addEventListener('dragstart', dragStart);
@@ -266,7 +266,7 @@ const startPuzzleCountdown = () => {
 		if (countdownNumber === 0) {
 			clearInterval(countdown);
 			setPuzzlePieces();
-			// setPuzzleBase(`${BASE_SRC}/${CHARACTER}/CLEANED.png`);
+			setPuzzleBase(`${BASE_SRC}/${CHARACTER}/CLEANED.png`);
 		}
 	}, 1000);
 };
@@ -298,8 +298,8 @@ setPuzzle(CHARACTER);
 const evaluatePuzzleSolution = (pixelsFailed, numberOfPieces) => {
 	// el fallo minimo y maximo estan calculados a ojo :/
 	const minFail = 50 * numberOfPieces; // nota: 10
-	const maxFail = 800 * numberOfPieces; // nota: 0
-	const gradeDifference = Math.round((maxFail - minFail) / numberOfPieces);
+	const maxFail = 1000 * numberOfPieces; // nota: 0
+	const gradeDifference = Math.round((maxFail - minFail) / 9);
 
 	console.log('NOTAS');
 	console.log('nota de 10: ' + minFail);
